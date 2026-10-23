@@ -280,3 +280,108 @@ body.hud-off #hud, body.hud-off #keys { opacity: 0; pointer-events: none; }
   transition: opacity 600ms var(--ease-out-quart), transform 600ms var(--ease-out-quart);
 }
 #brand.is-on { opacity: 1; transform: none; transition-delay: 300ms; }
+
+/* ===========================================================================
+   PHONES (max-width 820px, or a landscape phone under 520px tall).
+   The 3D walls are 1600×1000 landscape canvases, unreadable at phone size, so
+   here they stay as a live backdrop and each wall's copy moves into #sheet:
+   plain HTML at the standard (unscaled) Waves type roles. Desktop is untouched.
+   Must match PHONE_MQ in game.js.
+   =========================================================================== */
+#sheet, .enter-btn, #hud .hud__step { display: none; }
+
+@media (max-width: 820px), (max-height: 520px) {
+  html, body { touch-action: manipulation; }
+  #keys, .hint { display: none; }
+
+  /* reading sheet for walls 1–6 */
+  #sheet {
+    --u: 1;
+    display: block;
+    position: fixed; left: 0; right: 0; bottom: 0;
+    max-height: 62svh;
+    overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+    padding: 0 1.25rem calc(5.25rem + env(safe-area-inset-bottom));
+    border-radius: var(--radius-media-lg) var(--radius-media-lg) 0 0;
+    background-color: var(--surface-inverse);
+    background-image: linear-gradient(to right, rgba(45,34,48,.96) 0%, rgba(64,31,96,.94) 35%, rgba(79,31,79,.94) 65%, rgba(45,34,48,.96) 100%);
+    border-top: 1px solid rgba(242, 233, 238, 0.14);
+    box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.35);
+    opacity: 0; transform: translateY(24px); pointer-events: none;
+    transition: opacity 600ms var(--ease-out-quart), transform 600ms var(--ease-out-quart);
+  }
+  #sheet.is-on { opacity: 1; transform: none; pointer-events: auto; transition-delay: 500ms; }
+  #sheet.is-on.is-collapsed { transform: translateY(calc(100% - 7.5rem - env(safe-area-inset-bottom))); transition-delay: 0ms; overflow: hidden; }
+  .sheet__toggle {
+    position: sticky; top: 0; z-index: 3;
+    display: grid; place-items: center; width: calc(100% + 2.5rem); margin: 0 -1.25rem;
+    height: 1.75rem; border: 0; background: transparent; cursor: pointer;
+  }
+  .sheet__toggle span { width: 2.5rem; height: 4px; border-radius: 2px; background: rgba(242, 233, 238, 0.35); }
+  .sheet__body { display: grid; gap: 0.75rem; }
+  #sheet .micro { color: var(--color-pink-300); }
+  #sheet .lead { font-size: 1.125rem; opacity: 0.85; }
+  #sheet .media { aspect-ratio: auto; margin: 0.25rem 0; }
+  #sheet .media img { height: auto; }
+  #sheet .cards { display: grid; grid-template-columns: 1fr; gap: 0.625rem; margin-top: 0.25rem; }
+  #sheet .card h3 { font-size: 1.125rem; }
+  #sheet .card p { font-size: 0.9375rem; }
+  #sheet .links { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+
+  /* touch has no hover: a tapped card shows its tooltip under the copy */
+  .card__tip { position: static; margin-top: 0.5rem; display: none; opacity: 1; transform: none; }
+  .card__tip::after { display: none; }
+  .has-tip.tip-on .card__tip { display: block; }
+  .has-tip::before {
+    content: "Tap for note"; position: absolute; right: 0.75rem; bottom: 0.6rem;
+    font-size: 0.6875rem; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.45;
+  }
+  .has-tip.tip-on::before { content: ""; }
+  .card.has-tip { padding-bottom: 1.75rem; }
+
+  /* start screen + topic 7: bottom cards instead of a left column */
+  .overlay-card {
+    left: 0; right: 0; top: auto; bottom: 0; width: auto;
+    max-height: 58svh; overflow-y: auto; overscroll-behavior: contain;
+    padding: 1.5rem 1.25rem calc(5.25rem + env(safe-area-inset-bottom));
+    border-radius: var(--radius-media-lg) var(--radius-media-lg) 0 0;
+    background: linear-gradient(to bottom, rgba(45,34,48,0) 0%, rgba(45,34,48,.88) 18%, rgba(45,34,48,.96) 100%);
+    transform: translateY(24px);
+  }
+  .overlay-card.is-on { transform: none; }
+  .overlay-card .display-1 { font-size: 2rem; }
+  .overlay-card .display-2 { font-size: 1.75rem; }
+  .overlay-card .statement, .overlay-card .lead { font-size: 1.0625rem; }
+  .list { grid-template-columns: 1fr; margin-top: 1.25rem; }
+  .enter-btn { --u: 1; display: inline-flex; margin-top: 1.25rem; border: 0; font-family: inherit; cursor: pointer; }
+  #intro { padding-bottom: calc(9rem + env(safe-area-inset-bottom)); }   /* room for the presenter badge */
+
+  #brand { top: calc(1rem + env(safe-area-inset-top)); left: 1.25rem; height: 1.5rem; }
+  #presenter { left: 1.25rem; bottom: calc(4.75rem + env(safe-area-inset-bottom)); z-index: 2; }
+  #presenter img { width: 44px; height: 44px; }
+  .presenter__name { font-size: 1rem; }
+
+  /* HUD: numbers only, with prev/next, pinned above the home indicator */
+  #hud {
+    z-index: 4; bottom: calc(0.75rem + env(safe-area-inset-bottom));
+    gap: 0.125rem; padding: 0.25rem; max-width: calc(100vw - 1.5rem);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  #hud button { padding: 0.5rem 0.7rem; min-width: 2.25rem; justify-content: center; }
+  #hud button span, #hud button.is-on span { display: none; }
+  #hud .hud__step { display: flex; font-size: 1.25rem; line-height: 1; opacity: 0.8; }
+}
+
+/* landscape phone: sheet and cards sit on the left, scene on the right */
+@media (max-height: 520px) and (orientation: landscape) {
+  #sheet, .overlay-card {
+    left: 0; right: auto; top: 0; bottom: 0; width: min(52vw, 30rem); max-height: none;
+    padding-top: calc(0.75rem + env(safe-area-inset-top)); padding-left: calc(1.25rem + env(safe-area-inset-left));
+    border-radius: 0 var(--radius-media-lg) var(--radius-media-lg) 0;
+  }
+  .overlay-card { background: linear-gradient(to right, rgba(45,34,48,.96) 0%, rgba(45,34,48,.9) 80%, rgba(45,34,48,0) 100%); }
+  #sheet.is-on.is-collapsed { transform: translateX(calc(-100% + 2rem)); }
+  #brand { display: none; }
+  #presenter { display: none; }
+  #intro { padding-bottom: calc(4.5rem + env(safe-area-inset-bottom)); }
+}

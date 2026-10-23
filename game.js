@@ -16,9 +16,27 @@
   // right-most card, level with the card row, so it never covers the copy.
   const ROCKET_REST = { x: PANEL_HALF.x + 0.55, y: -3.0 };
   const DIST = { def: 12.5, min: 3.5, max: 18 };       // camera distance from a wall (def is re-fitted to the screen)
+  // Phones: the walls become a backdrop and their copy moves into a readable
+  // 2D sheet (see #sheet in style.css), so the 3D framing loosens up.
+  const PHONE_MQ = matchMedia("(max-width: 820px), (max-height: 520px)");
+  let isPhone = PHONE_MQ.matches;
   const fitDist = () => {
     const t = Math.tan(THREE.MathUtils.degToRad(25));
+    if (isPhone) return innerHeight > innerWidth ? DIST.max : clamp((PANEL_HALF.y + 0.9) / t, 8, DIST.max);   // portrait: as far back as the box allows
     return clamp(Math.max((ROCKET_REST.x + 1.15) / (t * innerWidth / innerHeight), (PANEL_HALF.y + 0.9) / t), 8, DIST.max);
+  };
+  // On a phone the rocket parks in the visible top-right of the view instead
+  // of beside the cards (which are in the sheet, not on screen).
+  const restPos = () => {
+    if (!isPhone) return ROCKET_REST;
+    const vh = Math.tan(THREE.MathUtils.degToRad(25)) * DIST.def;
+    const vw = vh * ((innerWidth / innerHeight) || 1);
+    return { x: Math.min(ROCKET_REST.x, vw * 0.55), y: vh * 0.35 };
+  };
+  // Portrait phones need the camera further out to fit the box's width.
+  const orbitDef = () => {
+    const a = (innerWidth / innerHeight) || 16 / 9;
+    return isPhone ? clamp(ORBIT.def * Math.max(1, 0.95 / a), ORBIT.def, ORBIT.max) : ORBIT.def;
   };
   const ORBIT = { def: 48, min: 24, max: 80, rocket: 15 };
   const COL = {
@@ -47,7 +65,7 @@
 
   // ---- renderers -----------------------------------------------------------
   const gl = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
-  gl.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  gl.setPixelRatio(Math.min(window.devicePixelRatio, isPhone ? 1.5 : 2));
   gl.setClearColor(0x000000, 0);
   gl.outputEncoding = THREE.sRGBEncoding;
   gl.toneMapping = THREE.ACESFilmicToneMapping;
@@ -366,7 +384,9 @@
     <p class="micro">${esc(I.eyebrow)}</p>
     <h1 class="display-1">${esc(I.title)}</h1>
     <p class="statement">${esc(I.lead)}</p>
-    ${I.hint ? `<p class="hint meta"><kbd>1</kbd> ${esc(I.hint)}</p>` : ""}`;
+    ${I.hint ? `<p class="hint meta"><kbd>1</kbd> ${esc(I.hint)}</p>` : ""}
+    <button class="btn enter-btn" type="button">Step inside <span aria-hidden="true">›</span></button>`;
+  introEl.querySelector(".enter-btn").addEventListener("click", () => go(1));
   const T7 = CONTENT.topics[6];
   outroEl.innerHTML = `
     <p class="micro">${esc(T7.eyebrow)}</p>
@@ -377,12 +397,47 @@
     ${(T7.links || []).map((l) => `<a class="btn" style="--u:1;margin-top:1.5rem" href="${esc(l.href)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join("")}`;
 
   const hud = document.getElementById("hud");
+  const step = (label, dir, cls) => {
+    const b = document.createElement("button");
+    b.className = "hud__step " + cls;
+    b.setAttribute("aria-label", label);
+    b.innerHTML = dir < 0 ? "‹" : "›";
+    b.addEventListener("click", () => go(st.stage + dir));
+    return b;
+  };
+  hud.appendChild(step("Previous", -1, "hud__prev"));
   const hudButtons = CONTENT.topics.map((t, i) => {
     const b = document.createElement("button");
     b.innerHTML = `<b>${i + 1}</b><span>${esc(t.short)}</span>`;
     b.addEventListener("click", () => go(i + 1));
     hud.appendChild(b);
     return b;
+  });
+  hud.appendChild(step("Next", 1, "hud__next"));
+
+  // Phone reading sheet: the current wall's copy as plain, scrollable HTML.
+  // Hidden on desktop by CSS; same content and helpers as the 3D panel.
+  const sheet = document.getElementById("sheet");
+  function sheetHTML(t) {
+    const img = t.image && t.image.src
+      ? `<figure class="media"><img src="${esc(t.image.src)}" alt="${esc(t.image.alt)}" width="1600" height="1000"></figure>` : "";
+    const links = (t.links || []).map((l) =>
+      `<a class="btn" href="${esc(l.href)}" target="_blank" rel="noopener">${esc(l.label)} <span aria-hidden="true">↗</span></a>`).join("");
+    const cards = (t.items || []).map((it) =>
+      `<li class="${cardClass(it, "card")}">${it.tag ? `<span class="chip">${esc(it.tag)}</span>` : ""}<h3>${esc(it.title)}${arrow(it)}</h3><p>${esc(it.body)}</p>${cardLink(it)}${tip(it)}</li>`).join("");
+    return `
+      <button class="sheet__toggle" aria-label="Collapse or expand"><span></span></button>
+      <div class="sheet__body">
+        <p class="micro">${esc(t.eyebrow)}</p>
+        <h2 class="display-2">${esc(t.title)}</h2>
+        <p class="lead">${esc(t.lead)}</p>
+        ${img}
+        <ul class="cards">${cards}</ul>
+        ${links ? `<div class="links">${links}</div>` : ""}
+      </div>`;
+  }
+  sheet.addEventListener("click", (e) => {
+    if (e.target.closest(".sheet__toggle")) sheet.classList.toggle("is-collapsed");
   });
 
   // film grain tile, deliberately strong and dialled down by CSS opacity
@@ -404,7 +459,7 @@
   // stage: 0 = intro (outside), 1–6 = inner walls, 7 = outside overview
   const st = {
     stage: 0,
-    ox: ROCKET_REST.x, oy: ROCKET_REST.y, vx: 0, vy: 0, camOx: 0, camOy: 0, camTx: 0, camTy: 0,
+    ox: 0, oy: 0, vx: 0, vy: 0, camOx: 0, camOy: 0, camTx: 0, camTy: 0,
     dist: DIST.def, distT: DIST.def,
     az: 0.55, el: 0.22, vaz: 0, vel: 0, R: ORBIT.def, RT: ORBIT.def,
     idle: 0,
@@ -416,7 +471,7 @@
     stage = clamp(stage, 0, 7);
     if (stage === st.stage && !trans) {
       // pressing the same key again recentres
-      parkRocket(); st.camTx = st.camTy = 0; st.distT = DIST.def; st.RT = ORBIT.def;
+      parkRocket(); st.camTx = st.camTy = 0; st.distT = DIST.def; st.RT = orbitDef();
       return;
     }
     const wasOutside = st.stage === 0 || st.stage === 7;
@@ -431,13 +486,13 @@
     st.stage = stage;
     parkRocket(); st.camOx = st.camOy = st.camTx = st.camTy = 0;
     st.dist = st.distT = DIST.def;
-    st.R = st.RT = ORBIT.def;
+    st.R = st.RT = orbitDef();
     history.replaceState(null, "", "#" + stage);
     updateUI();
   }
 
   function parkRocket() {
-    st.ox = ROCKET_REST.x; st.oy = ROCKET_REST.y; st.vx = st.vy = 0;
+    const r = restPos(); st.ox = r.x; st.oy = r.y; st.vx = st.vy = 0;
   }
 
   function updateUI() {
@@ -446,6 +501,15 @@
     brandEl.classList.toggle("is-on", st.stage === 0);
     outroEl.classList.toggle("is-on", st.stage === 7);
     hudButtons.forEach((b, i) => b.classList.toggle("is-on", st.stage === i + 1));
+    const onWall = st.stage >= 1 && st.stage <= 6;
+    if (onWall && sheet.dataset.stage !== String(st.stage)) {
+      sheet.dataset.stage = st.stage;
+      sheet.innerHTML = sheetHTML(CONTENT.topics[st.stage - 1]);
+      sheet.classList.remove("is-collapsed");
+      sheet.scrollTop = 0;
+    }
+    if (!onWall) delete sheet.dataset.stage;
+    sheet.classList.toggle("is-on", onWall);
   }
 
   // ---- input -----------------------------------------------------------------------
@@ -470,6 +534,28 @@
   addEventListener("keyup", (e) => keys.delete(e.key));
   addEventListener("blur", () => keys.clear());
   addEventListener("wheel", (e) => { zoom(Math.sign(e.deltaY) * 0.5); }, { passive: true });
+
+  let touch0 = null;
+  addEventListener("touchstart", (e) => {
+    const t = e.touches[0];
+    touch0 = e.touches.length === 1 && !e.target.closest("#hud") ? { x: t.clientX, y: t.clientY, at: performance.now() } : null;
+  }, { passive: true });
+  addEventListener("touchend", (e) => {
+    if (!touch0) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - touch0.x, dy = t.clientY - touch0.y;
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.6 && performance.now() - touch0.at < 700) {
+      go(st.stage + (dx < 0 ? 1 : -1));
+    }
+    touch0 = null;
+  }, { passive: true });
+  // no hover on touch screens: a tap shows a card's tooltip (tap again or elsewhere to hide)
+  addEventListener("click", (e) => {
+    if (!matchMedia("(hover: none)").matches) return;
+    const c = e.target.closest(".has-tip");
+    document.querySelectorAll(".has-tip.tip-on").forEach((x) => { if (x !== c) x.classList.remove("tip-on"); });
+    if (c && !e.target.closest("a")) c.classList.toggle("tip-on");
+  });
 
   function zoom(dir) {
     if (st.stage === 0 || st.stage === 7) st.RT = clamp(st.RT + dir * 5, ORBIT.min, ORBIT.max);
@@ -498,8 +584,12 @@
       const dir = V3(Math.cos(st.el) * Math.sin(st.az), Math.sin(st.el), Math.cos(st.el) * Math.cos(st.az));
       const r = new THREE.Vector3().crossVectors(AX.y, dir).normalize();
       const u = new THREE.Vector3().crossVectors(dir, r);
-      // shift the camera left so the box sits right of the overlay card
-      p.cam = dir.clone().multiplyScalar(st.R).addScaledVector(r, -st.R * 0.3);
+      // shift the camera left so the box sits right of the overlay card;
+      // on a portrait phone, centre it and lift it above the bottom sheet
+      const portraitPhone = isPhone && innerHeight > innerWidth;
+      p.cam = dir.clone().multiplyScalar(st.R)
+        .addScaledVector(r, portraitPhone ? 0 : -st.R * 0.3)
+        .addScaledVector(u, portraitPhone ? -st.R * 0.24 : 0);
       p.camQ = basisQuat(r, u, dir);
       const ra = st.az + 0.2 + Math.sin(time * 0.4) * 0.05;
       const re = st.el - 0.05;
@@ -649,7 +739,10 @@
 
   function resize() {
     if (!innerWidth || !innerHeight) return;   // hidden/zero-size window: keep the last good size
+    isPhone = PHONE_MQ.matches;
+    document.body.classList.toggle("is-phone", isPhone);
     DIST.def = fitDist();
+    st.distT = DIST.def; st.RT = orbitDef();      // re-frame after a rotate or screen change
     camera.aspect = innerWidth / innerHeight;
     camera.updateProjectionMatrix();
     gl.setSize(innerWidth, innerHeight);
@@ -659,6 +752,8 @@
   addEventListener("resize", resize);
   resize();
   st.dist = st.distT = DIST.def;
+  st.R = st.RT = orbitDef();
+  parkRocket();
 
   // start where the URL says (handy when reloading mid-talk)
   const start = parseInt(location.hash.slice(1), 10);
