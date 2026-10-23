@@ -1,0 +1,279 @@
+/* Waves '26 tokens (subset of references/tokens.css) */
+@font-face { font-family: "Satoshi"; src: url("fonts/Satoshi-400.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Satoshi"; src: url("fonts/Satoshi-500.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "Satoshi"; src: url("fonts/Satoshi-700.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+
+:root {
+  --color-ink: #2d2230;
+  --color-deep-purple: #4b3850;
+  --color-purple-200: #ddc9f2;
+  --color-purple-500: #8f4bd2;
+  --color-purple-800: #4f2974;
+  --color-pink-200: #fbe0fb;
+  --color-pink-300: #f7c2f7;
+  --color-pink-500: #ef84ef;
+  --color-analog-white: #f2e9ee;
+  --color-blush-100: #f7d1e0;
+  --color-gradient-violet: #401f60;
+  --color-gradient-plum: #4f1f4f;
+
+  --text-on-dark: var(--color-analog-white);
+  --surface-inverse: var(--color-ink);
+  --gradient-inverse: linear-gradient(to right, var(--color-ink) 0%, var(--color-gradient-violet) 35%, var(--color-gradient-plum) 65%, var(--color-ink) 100%);
+  --gradient-agenda-card: linear-gradient(to right, var(--color-purple-200) 0%, var(--color-blush-100) 100%);
+  --gradient-button-light: linear-gradient(90deg, var(--color-pink-200) 0%, var(--color-analog-white) 100%);
+
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --radius-sm: 8px;
+  --radius-pill: 60px;
+  --radius-media: 10px;
+  --radius-media-lg: 13px;
+  --shadow-card: 0 2px 12px rgba(45, 34, 48, 0.08);
+
+  --font-sans: "Satoshi", ui-sans-serif, system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--surface-inverse);
+  background-image: var(--gradient-inverse);
+  color: var(--text-on-dark);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+#css, #gl { position: fixed; inset: 0; }
+#gl { pointer-events: none; }
+#gl canvas { display: block; }
+
+/* ---- type roles (2D overlay, standard sizes) ---- */
+.micro   { font-size: 0.75rem; line-height: 1.5; font-weight: 400; text-transform: uppercase; letter-spacing: 0.08em; }
+.meta    { font-size: 0.875rem; line-height: 1.45; font-weight: 400; }
+.lead    { font-size: 1.25rem; line-height: 1.5; font-weight: 500; }
+.title   { font-size: clamp(1.25rem, 1.6vw, 1.5rem); line-height: 1.3; font-weight: 500; }
+.display-1 { font-size: clamp(2.25rem, 4.25vw, 4rem); line-height: 1.05; letter-spacing: -0.02em; font-weight: 500; }
+.display-2 { font-size: clamp(2rem, 3.4vw, 3rem); line-height: 1.1; letter-spacing: -0.02em; font-weight: 500; }
+.statement { font-size: clamp(1.25rem, 2.2vw, 2rem); line-height: 1.5; font-weight: 500; }
+
+/* ===========================================================================
+   WALL PANELS (CSS3D). Designed on a 1600×1000 canvas at presentation scale:
+   every Waves role and radius × 1.5 (--u), so the ratios stay intact.
+   =========================================================================== */
+.panel {
+  --u: 1.5;
+  width: 1600px;
+  height: 1000px;
+  padding: calc(48px * var(--u));
+  display: flex;
+  flex-direction: column;
+  gap: calc(32px * var(--u));
+  border-radius: calc(var(--radius-media-lg) * var(--u));
+  background-color: rgba(45, 34, 48, 0.72);
+  background-image: linear-gradient(to right, rgba(45,34,48,.82) 0%, rgba(64,31,96,.72) 35%, rgba(79,31,79,.72) 65%, rgba(45,34,48,.82) 100%);
+  border: 2px solid rgba(242, 233, 238, 0.14);
+  color: var(--text-on-dark);
+  backface-visibility: hidden;
+  transition: opacity 600ms var(--ease-out-quart);
+  pointer-events: auto;
+}
+.panel__head { display: flex; gap: calc(40px * var(--u)); flex: 1; min-height: 0; }
+.panel__text { flex: 1.15; display: flex; flex-direction: column; gap: calc(16px * var(--u)); }
+.panel .micro   { font-size: calc(0.75rem * var(--u)); color: var(--color-pink-300); }
+.panel .display { font-size: calc(3rem * var(--u)); line-height: 1.1; letter-spacing: -0.02em; font-weight: 500; }
+.panel .lead    { font-size: calc(1.25rem * var(--u)); opacity: 0.85; max-width: 32ch; }
+.panel .links   { margin-top: auto; display: flex; gap: calc(12px * var(--u)); flex-wrap: wrap; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 0.5em;
+  padding: calc(10px * var(--u)) calc(26px * var(--u));
+  border-radius: calc(var(--radius-sm) * var(--u));
+  background-color: var(--color-analog-white);
+  background-image: var(--gradient-button-light);
+  color: var(--color-ink);
+  font-size: calc(0.875rem * var(--u)); font-weight: 500; line-height: 1.45;
+  text-decoration: none;
+  box-shadow: 0 4px 4px rgba(0,0,0,.25);
+  transition: transform 200ms var(--ease-out-quart);
+}
+.btn:hover { transform: translateY(-2px); }
+
+.media {
+  flex: 1;
+  border-radius: calc(var(--radius-media) * var(--u));
+  overflow: hidden;
+  clip-path: inset(0 round calc(var(--radius-media) * var(--u)));
+  aspect-ratio: 16 / 10;
+  align-self: flex-start;
+}
+.media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.media--empty {
+  display: grid; place-items: center; text-align: center;
+  border: 3px dashed rgba(242, 233, 238, 0.28);
+  color: rgba(242, 233, 238, 0.6);
+  font-size: calc(0.875rem * var(--u));
+  padding: 24px;
+}
+
+.cards { list-style: none; display: grid; grid-template-columns: repeat(var(--cols, 3), 1fr); gap: calc(16px * var(--u)); }
+.card {
+  position: relative;
+  padding: calc(20px * var(--u));
+  border-radius: calc(var(--radius-media) * var(--u));
+  background-color: var(--color-purple-200);
+  background-image: var(--gradient-agenda-card);
+  color: var(--color-ink);
+  box-shadow: var(--shadow-card);
+}
+.card h3 { font-size: calc(1.5rem * var(--u)); line-height: 1.3; font-weight: 500; }
+.card:has(.chip) h3 { padding-right: 4.5em; }
+.card__link { position: absolute; inset: 0; border-radius: inherit; z-index: 1; }
+.card__arrow { opacity: 0.55; font-weight: 400; }
+.card.is-link, .list li.is-link { cursor: pointer; }
+.card.is-link, .card.has-tip, .list li.is-link, .list li.has-tip { transition: transform 200ms var(--ease-out-quart), box-shadow 200ms var(--ease-out-quart), background 200ms var(--ease-out-quart); }
+.card.is-link:hover, .card.has-tip:hover { transform: translateY(calc(-3px * var(--u))); box-shadow: 0 6px 20px rgba(45, 34, 48, 0.25); }
+.list li.is-link:hover, .list li.has-tip:hover { transform: translateY(-2px); background: rgba(242, 233, 238, 0.1); }
+
+/* Hover tooltip (cards with `tooltip` in content.js). Sits above the card,
+   ink on light, fades and lifts in with the card. */
+.card__tip {
+  --u: 1;
+  position: absolute; left: 0; right: 0; bottom: calc(100% + 10px * var(--u));
+  z-index: 2;
+  padding: calc(8px * var(--u)) calc(12px * var(--u));
+  border-radius: calc(var(--radius-sm) * var(--u));
+  background: var(--color-ink);
+  color: var(--color-analog-white);
+  font-size: calc(0.875rem * var(--u)); line-height: 1.45; font-weight: 400;
+  text-align: left; text-transform: none; letter-spacing: 0;
+  box-shadow: 0 6px 20px rgba(45, 34, 48, 0.35);
+  opacity: 0; transform: translateY(calc(6px * var(--u)));
+  pointer-events: none;
+  transition: opacity 200ms var(--ease-out-quart), transform 200ms var(--ease-out-quart);
+}
+.card__tip::after {
+  content: ""; position: absolute; top: 100%; left: calc(24px * var(--u));
+  border: calc(7px * var(--u)) solid transparent; border-top-color: var(--color-ink);
+}
+.panel .card__tip { --u: 1.5; }
+.has-tip:hover .card__tip { opacity: 1; transform: translateY(0); }
+.card p  { font-size: calc(1rem * var(--u)); line-height: 1.6; color: var(--color-deep-purple); margin-top: calc(6px * var(--u)); }
+.chip {
+  position: absolute; top: calc(14px * var(--u)); right: calc(14px * var(--u));
+  padding: calc(3px * var(--u)) calc(10px * var(--u));
+  border-radius: calc(var(--radius-sm) * var(--u));
+  background: var(--color-deep-purple); color: var(--color-analog-white);
+  font-size: calc(0.75rem * var(--u)); text-transform: uppercase; letter-spacing: 0.08em;
+}
+
+/* Labels on the outside of the box (topic 7 view) */
+.facelabel {
+  width: 1100px; height: 1100px;
+  display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 24px;
+  text-align: center;
+  backface-visibility: hidden;
+  color: var(--text-on-dark);
+  transition: opacity 600ms var(--ease-out-quart);
+  pointer-events: none;
+}
+.facelabel b { font-size: 9rem; line-height: 1; font-weight: 500; letter-spacing: -0.02em; color: var(--color-pink-300); }
+.facelabel span { font-size: 4rem; line-height: 1.1; font-weight: 500; letter-spacing: -0.02em; max-width: 12ch; }
+
+/* ---- 2D overlay cards (intro + topic 7) ---- */
+.overlay-card {
+  position: fixed;
+  left: clamp(1rem, 4vw, 4rem);
+  top: 50%;
+  width: min(40rem, 46vw);
+  transform: translateY(calc(-50% + 24px));
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 600ms var(--ease-out-quart), transform 600ms var(--ease-out-quart);
+}
+.overlay-card.is-on { opacity: 1; transform: translateY(-50%); pointer-events: auto; transition-delay: 400ms; }
+.overlay-card .micro { color: var(--color-pink-300); margin-bottom: 1rem; }
+.overlay-card .lead, .overlay-card .statement { opacity: 0.85; margin-top: 1.25rem; }
+.hint { display: inline-flex; gap: .6rem; align-items: center; margin-top: 2.5rem; }
+
+.list { list-style: none; margin-top: 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+.list li {
+  position: relative;
+  padding: 0.8rem 1rem;
+  border-radius: var(--radius-media);
+  background: rgba(242, 233, 238, 0.06);
+  border: 1px solid rgba(242, 233, 238, 0.12);
+}
+.list li .title { font-size: 1.125rem; }
+.list li .meta { opacity: 0.7; }
+.list li .chip { position: static; display: inline-block; margin-bottom: 0.35rem; padding: 2px 8px; font-size: 0.6875rem; border-radius: var(--radius-sm); background: var(--color-purple-800); }
+
+/* ---- HUD ---- */
+#hud {
+  position: fixed; left: 50%; bottom: 1.25rem; transform: translateX(-50%);
+  display: flex; gap: 0.375rem; padding: 0.375rem;
+  border-radius: var(--radius-pill);
+  background: rgba(45, 34, 48, 0.55);
+  border: 1px solid rgba(242, 233, 238, 0.12);
+  backdrop-filter: blur(12px);
+  transition: opacity 300ms var(--ease-out-quart);
+}
+#hud button {
+  font: inherit; font-size: 0.875rem; line-height: 1.45; font-weight: 500;
+  color: var(--text-on-dark);
+  background: transparent; border: 0; cursor: pointer;
+  padding: 0.4rem 0.9rem; border-radius: var(--radius-pill);
+  display: flex; gap: 0.5rem; align-items: center;
+  transition: background 250ms var(--ease-out-quart), color 250ms var(--ease-out-quart);
+}
+#hud button b { opacity: 0.55; font-weight: 500; }
+#hud button span { display: none; }
+#hud button.is-on { background-image: var(--gradient-button-light); color: var(--color-ink); }
+#hud button.is-on span { display: inline; }
+#hud button.is-on b { opacity: 1; }
+
+#keys {
+  position: fixed; right: clamp(1rem, 2vw, 2rem); top: 1.25rem;
+  display: flex; gap: 1.1rem; opacity: 0.6;
+  transition: opacity 300ms var(--ease-out-quart);
+}
+kbd {
+  font: inherit; font-size: 0.75rem;
+  display: inline-grid; place-items: center; min-width: 1.5em; padding: 0 0.3em; margin-right: 0.15em;
+  border-radius: 4px; border: 1px solid rgba(242, 233, 238, 0.35);
+}
+body.hud-off #hud, body.hud-off #keys { opacity: 0; pointer-events: none; }
+
+#grain {
+  position: fixed; inset: 0; pointer-events: none;
+  opacity: 0.055; background-size: 128px 128px;
+  mix-blend-mode: overlay;
+}
+
+/* ---- presenter badge (start screen, bottom left) ---- */
+#presenter {
+  position: fixed; left: clamp(1rem, 4vw, 4rem); bottom: 1.25rem;
+  display: flex; align-items: center; gap: 0.875rem;
+  opacity: 0; transform: translateY(24px); pointer-events: none;
+  transition: opacity 600ms var(--ease-out-quart), transform 600ms var(--ease-out-quart);
+}
+#presenter.is-on { opacity: 1; transform: none; transition-delay: 400ms; }
+#presenter img {
+  width: 56px; height: 56px; border-radius: 50%; object-fit: cover; display: block;
+  border: 1px solid rgba(242, 233, 238, 0.35);
+}
+.presenter__name { font-size: 1.125rem; line-height: 1.3; font-weight: 500; }
+.presenter__role { opacity: 0.7; }
+.presenter__role span { font-size: 0.5em; vertical-align: middle; margin: 0 0.35em; }
+
+/* ---- Make logo (start screen, top left) ---- */
+#brand {
+  position: fixed; left: clamp(1rem, 4vw, 4rem); top: 5rem;
+  height: 2rem; width: auto; display: block;
+  opacity: 0; transform: translateY(-12px); pointer-events: none;
+  transition: opacity 600ms var(--ease-out-quart), transform 600ms var(--ease-out-quart);
+}
+#brand.is-on { opacity: 1; transform: none; transition-delay: 300ms; }

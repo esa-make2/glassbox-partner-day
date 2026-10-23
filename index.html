@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The glass box — Make Partner Day</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Layer order: CSS3D walls (bottom) → WebGL glass + rocket → 2D overlay → grain -->
+  <div id="css"></div>
+  <div id="gl"></div>
+
+  <section id="intro" class="overlay-card" aria-live="polite"></section>
+  <section id="outro" class="overlay-card" aria-live="polite"></section>
+
+  <img id="brand" src="assets/make_AnalogWhite_logo.png" alt="Make">
+  <div id="presenter" aria-label="Presenter"></div>
+
+  <nav id="hud" aria-label="Topics"></nav>
+  <div id="keys" class="meta">
+    <span><kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> fly</span>
+    <span><kbd>+</kbd><kbd>−</kbd> zoom</span>
+    <span><kbd>1</kbd>–<kbd>7</kbd> walls</span>
+    <span><kbd>0</kbd> start</span>
+    <span><kbd>H</kbd> hide</span>
+    <span><kbd>F</kbd> fullscreen</span>
+  </div>
+
+  <div id="grain" aria-hidden="true"></div>
+
+  <script src="lib/three.min.js"></script>
+  <script src="lib/RoundedBoxGeometry.js"></script>
+  <script src="lib/CSS3DRenderer.js"></script>
+  <script src="lib/RoomEnvironment.js"></script>
+  <script src="content.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
