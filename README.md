@@ -25,4 +25,5 @@ Images: drop files in `assets/` and set `image: { src: "assets/your-file.png", a
 - `content.js`: all copy, links, images
 - `game.js`: three.js scene (glass box, rocket, camera)
 - `style.css`: Waves '26 tokens; wall panels use every role × 1.5 for projector legibility
-- `lib/`: three.js r147 (classic build so it runs from file://), `fonts/`: Satoshi (Fontshare)
+- `lib/`: three.js r147 (classic build so it runs from file://), with its MIT licence
+- `fonts/`: Satoshi from Fontshare, kept on this computer only for offline use. It's gitignored because the ITF Free Font License doesn't allow sharing the font files in a public repository. Without it, the page loads Satoshi from Fontshare's servers, so it needs internet.
