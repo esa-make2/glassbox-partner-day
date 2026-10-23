@@ -28,3 +28,12 @@ Images: drop files in `assets/` and set `image: { src: "assets/your-file.png", a
 - `game.js`: three.js scene (glass box, rocket, camera)
 - `style.css`: Waves '26 tokens; wall panels use every role × 1.5 for projector legibility
 - `lib/`: three.js r147 (classic build so it runs from file://), `fonts/`: Satoshi (Fontshare)
+
+## Live site
+https://esa-make2.github.io/glassbox-partner-day/ (GitHub Pages, from the `main` branch of esa-make2/glassbox-partner-day).
+
+To publish changes, run these in this folder, then wait a minute or two and reload the site:
+```bash
+git add -A && git commit -m "Update content" && git push
+```
+For the talk itself, present from the local copy (double-click `index.html`); it needs no Wi-Fi.
