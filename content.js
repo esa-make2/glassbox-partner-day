@@ -39,7 +39,7 @@ window.GLASSBOX_CONTENT = {
       title: "The execution layer for your agents",
       lead: "Make is the execution layer that lets any agent act in real systems, dependably and within limits you set.",
       items: [
-        { title: "Make MCP server + skills", body: "Give any MCP-capable agent the power to act, with the same permissions as the person it works for.", tooltip: "Let's set these up in Claude and create an MCP toolbox." },
+        { title: "Make MCP server + skills", body: "Give any MCP-capable agent the power to act, with the same permissions as the person it works for." },
         { title: "MCP toolboxes", body: "Decide in advance what each agent can reach, and nothing outside it. Available with scenarios today, with more capabilities coming soon." },
         { title: "Your client of choice", body: "Claude, ChatGPT, Cursor, Microsoft Copilot, or any agent that speaks MCP." },
       ],
@@ -52,8 +52,8 @@ window.GLASSBOX_CONTENT = {
       title: "Native AI capabilities",
       lead: "AI that helps you build, AI that runs your processes, and the knowledge to ground it.",
       items: [
-        { title: "Maia, a native assistant", body: "Text-to-scenario from scratch, existing scenarios explained, assisted debugging.", tooltip:"Let's debug a broken scenario live with Maia." },
-        { title: "Make AI Agents", body: "Agents that reason, act and run inside a visual landscape. Call MCP servers, tools, and chat with it natively or from other tools.", tooltip:"Let's import some knowledge and expose it to a Make AI Agent." },
+        { title: "Maia, a native assistant", body: "Text-to-scenario from scratch, existing scenarios explained, assisted debugging." },
+        { title: "Make AI Agents", body: "Agents that reason, act and run inside a visual landscape. Call MCP servers, tools, and chat with it natively or from other tools." },
         { title: "Knowledge layer", body: "Give agents the context they need, from your own sources." },
       ],
       links: [{ label: "Maia by Make", href: "https://www.make.com/maia" }, { label: "Make AI Agents", href: "https://www.make.com/ai-agents" }],
@@ -90,13 +90,13 @@ window.GLASSBOX_CONTENT = {
       title: "Quality of life, and more control & governance",
       lead: "Recent releases that make building faster and governing easier.",
       items: [
-        { title: "Data pinning", body: "Pin a module's output and keep building without re-running the scenario.", tag: "Coming soon" },
         { title: "Wait module", body: "Pause a scenario until the moment it should continue.", tag: "Coming soon" },
+        { title: "Data pinning", body: "Pin a module's output and keep building without re-running the modules in the path.", tag: "Coming soon" },
         { title: "Custom roles & Private Spaces", body: "Define exactly who can do what. Plus, everyone gets their own private team." },
         { title: "Other Notable Mentions", body: "Locked connections, scenario trash, new outputs panel + search, double-click to edit pills." }
       ],
       links: [{ label: "Release notes", href: "https://help.make.com/release-notes" }],
-      image: { src: "assets/wall5-present.svg", alt: "Data pinning, the Wait module and custom roles" },
+      image: { src: "assets/wall5-present.svg", alt: "The Wait module, data pinning and custom roles" },
     },
     {
       short: "The future: MakeOS",
@@ -110,7 +110,9 @@ window.GLASSBOX_CONTENT = {
         { title: "Govern", body: "Your data stays secure, the business scales, and spend stays under control." },
       ],
       links: [
-        { label: "MakeOS waitlist", href: "https://f.make.com/waves2026" }
+        { label: "MakeOS waitlist", href: "https://f.make.com/waves2026" },
+        { label: "Glass box vision blog post", href: "https://www.make.com/blog/waves26-the-glass-box-for-the-agentic-era" }
+
       ],
       image: { src: "assets/wall6-makeos.svg", alt: "MakeOS: Discover, Build and Observe form a loop, with Govern across all of it" },
     },
